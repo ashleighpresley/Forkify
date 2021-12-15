@@ -28,6 +28,11 @@ class RecipeView {
     this.#parentElement.insertAdjacentHTML(`afterbegin`, spinnerMarkup);
   };
 
+  //addHandlerRender=publisher, calls the function passed in as soon as one of the events happens
+  addHandlerRender(handler) {
+    ['hashchange', 'load'].forEach(ev => window.addEventListener(ev, handler));
+  }
+
   #generateMarkup() {
     return `
     <figure class="recipe__fig">

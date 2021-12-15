@@ -28,10 +28,10 @@ const controlRecipes = async function () {
   }
 };
 
-//show recipe when hash changes
-['hashchange', 'load'].forEach(ev =>
-  window.addEventListener(ev, controlRecipes)
-);
-//same as doing the following:
-// window.addEventListener('hashchange', controlRecipes);
-// window.addEventListener('load', controlRecipes);
+const init = function () {
+  //subscribing to controlRecipes
+  recipeView.addHandlerRender(controlRecipes);
+};
+
+//init function is immediataly called
+init();

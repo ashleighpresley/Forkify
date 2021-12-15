@@ -482,14 +482,12 @@ const controlRecipes = async function() {
         console.log(err);
     }
 };
-//show recipe when hash changes
-[
-    'hashchange',
-    'load'
-].forEach((ev)=>window.addEventListener(ev, controlRecipes)
-); //same as doing the following:
- // window.addEventListener('hashchange', controlRecipes);
- // window.addEventListener('load', controlRecipes);
+const init = function() {
+    //subscribing to controlRecipes
+    _recipeViewJsDefault.default.addHandlerRender(controlRecipes);
+};
+//init function is immediataly called
+init();
 
 },{"core-js/stable":"95FYz","regenerator-runtime/runtime":"1EBPE","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV","./model.js":"1pVJj","./views/recipeView.js":"82pEw"}],"95FYz":[function(require,module,exports) {
 require('../modules/es.symbol');
@@ -13755,6 +13753,14 @@ class RecipeView {
         this.#parentElement.innerHTML = '';
         this.#parentElement.insertAdjacentHTML(`afterbegin`, spinnerMarkup);
     };
+    //addHandlerRender=publisher, calls the function passed in as soon as one of the events happens
+    addHandlerRender(handler) {
+        [
+            'hashchange',
+            'load'
+        ].forEach((ev)=>window.addEventListener(ev, handler)
+        );
+    }
      #generateMarkup() {
         return `
     <figure class="recipe__fig">
