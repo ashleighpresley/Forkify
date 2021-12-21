@@ -505,11 +505,18 @@ const controlSearchResults = async function() {
         console.log(err);
     }
 };
+const controlPagination = function(goToPage) {
+    //Render results
+    _resultsViewJsDefault.default.render(_modelJs.getSearchResultsPage(goToPage));
+    //Render pagination buttons
+    _paginationViewJsDefault.default.render(_modelJs.state.search);
+};
 ///////////////////////////////////////
 const init = function() {
     //subscribing to controlRecipes
     _recipeViewJsDefault.default.addHandlerRender(controlRecipes);
     _searchViewJsDefault.default.addHandlerSearch(controlSearchResults);
+    _paginationViewJsDefault.default.addHandlerClick(controlPagination);
 };
 //init function is immediataly called
 init();
@@ -14310,24 +14317,20 @@ var _iconsSvg = require("url:../../img/icons.svg");
 var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
 class PaginationView extends _viewDefault.default {
     _parentElement = document.querySelector('.pagination');
+    addHandlerClick(handler) {
+        this._parentElement.addEventListener('click', function(e) {
+            const btn = e.target.closest('.btn--inline');
+            if (!btn) return;
+            const goToPage = +btn.dataset.goto;
+            handler(goToPage);
+        });
+    }
     _generateMarkup() {
         const numPages = Math.ceil(this._data.results.length / this._data.resultsPerPage);
         const currentPage = this._data.page;
-        //     <!-- <button class="btn--inline pagination__btn--prev">
-        //     <svg class="search__icon">
-        //       <use href="src/img/icons.svg#icon-arrow-left"></use>
-        //     </svg>
-        //     <span>Page 1</span>
-        //   </button>
-        //   <button class="btn--inline pagination__btn--next">
-        //     <span>Page 3</span>
-        //     <svg class="search__icon">
-        //       <use href="src/img/icons.svg#icon-arrow-right"></use>
-        //     </svg>
-        //   </button> -->
         //First page, of multiple pages
         if (currentPage === 1 && numPages > 1) return `
-        <button class="btn--inline pagination__btn--next">
+        <button data-goto="${currentPage + 1}" class="btn--inline pagination__btn--next">
             <span>Page ${currentPage + 1}</span>
             <svg class="search__icon">
               <use href="${_iconsSvgDefault.default}#icon-arrow-right"></use>
@@ -14335,7 +14338,7 @@ class PaginationView extends _viewDefault.default {
       </button>`;
         //Last page, of multiple pages
         if (currentPage === numPages && numPages > 1) return `
-      <button class="btn--inline pagination__btn--prev">
+      <button data-goto="${currentPage - 1}" class="btn--inline pagination__btn--prev">
             <svg class="search__icon">
                 <use href="${_iconsSvgDefault.default}#icon-arrow-left"></use>
             </svg>
@@ -14343,13 +14346,13 @@ class PaginationView extends _viewDefault.default {
         </button>`;
         //Middle page
         if (currentPage < numPages) return `
-      <button class="btn--inline pagination__btn--next">
-      <span>Page ${currentPage + 1}</span>
-      <svg class="search__icon">
-        <use href="${_iconsSvgDefault.default}#icon-arrow-right"></use>
-      </svg>
-</button>
-        <button class="btn--inline pagination__btn--prev">
+        <button data-goto="${currentPage + 1}" class="btn--inline pagination__btn--next">
+            <span>Page ${currentPage + 1}</span>
+            <svg class="search__icon">
+                <use href="${_iconsSvgDefault.default}#icon-arrow-right"></use>
+            </svg>
+        </button>
+        <button data-goto="${currentPage - 1}" class="btn--inline pagination__btn--prev">
             <svg class="search__icon">
                 <use href="${_iconsSvgDefault.default}#icon-arrow-left"></use>
             </svg>

@@ -56,12 +56,21 @@ const controlSearchResults = async function () {
   }
 };
 
+const controlPagination = function (goToPage) {
+  //Render results
+  resultsView.render(model.getSearchResultsPage(goToPage));
+
+  //Render pagination buttons
+  paginationView.render(model.state.search);
+};
+
 ///////////////////////////////////////
 
 const init = function () {
   //subscribing to controlRecipes
   recipeView.addHandlerRender(controlRecipes);
   searchView.addHandlerSearch(controlSearchResults);
+  paginationView.addHandlerClick(controlPagination);
 };
 
 //init function is immediataly called
