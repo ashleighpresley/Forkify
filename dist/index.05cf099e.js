@@ -515,7 +515,8 @@ const controlServings = function(newServings) {
     //Update the recipe servings
     _modelJs.updateServings(newServings);
     //Update the recipe view
-    _recipeViewJsDefault.default.render(_modelJs.state.recipe);
+    // recipeView.render(model.state.recipe);
+    _recipeViewJsDefault.default.update(_modelJs.state.recipe);
 };
 ///////////////////////////////////////
 const init = function() {
@@ -14233,6 +14234,22 @@ class View {
         const markup = this._generateMarkup();
         this._clear();
         this._parentElement.insertAdjacentHTML('afterbegin', markup);
+    }
+    update(data1) {
+        if (!data1 || Array.isArray(data1) && data1.length === 0) return this.renderError();
+        this._data = data1;
+        const newMarkup = this._generateMarkup();
+        const newDOM = document.createRange().createContextualFragment(newMarkup);
+        const newElements = Array.from(newDOM.querySelectorAll('*'));
+        const currElements = Array.from(this._parentElement.querySelectorAll('*'));
+        newElements.forEach((newEl, i)=>{
+            const currEl = currElements[i];
+            //Updates changed TEXT
+            if (!newEl.isEqualNode(currEl) && newEl.firstChild?.nodeValue.trim() !== '') currEl.textContent = newEl.textContent;
+            //Updates changed ATTRIBUTES
+            if (!newEl.isEqualNode(currEl)) Array.from(newEl.attributes).forEach((attr)=>currEl.setAttribute(attr.name, attr.value)
+            );
+        });
     }
     _clear() {
         this._parentElement.innerHTML = '';
