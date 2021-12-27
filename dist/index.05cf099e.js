@@ -471,6 +471,8 @@ var _resultsViewJs = require("./views/resultsView.js");
 var _resultsViewJsDefault = parcelHelpers.interopDefault(_resultsViewJs);
 var _paginationViewJs = require("./views/paginationView.js");
 var _paginationViewJsDefault = parcelHelpers.interopDefault(_paginationViewJs);
+var _bookmarksViewJs = require("./views/bookmarksView.js");
+var _bookmarksViewJsDefault = parcelHelpers.interopDefault(_bookmarksViewJs);
 ///////////////////////////////////////
 if (module.hot) module.hot.accept();
 ///////////////////////////////////////
@@ -482,6 +484,7 @@ const controlRecipes = async function() {
         _recipeViewJsDefault.default.renderSpinner();
         //Update results view to mark selected search result
         _resultsViewJsDefault.default.update(_modelJs.getSearchResultsPage());
+        _bookmarksViewJsDefault.default.update(_modelJs.state.bookmarks);
         //Load recipe
         await _modelJs.loadRecipe(id);
         //Render recipe
@@ -520,9 +523,13 @@ const controlServings = function(newServings) {
     _recipeViewJsDefault.default.update(_modelJs.state.recipe);
 };
 const controlAddBookmark = function() {
+    //Add/remove bookmark
     if (!_modelJs.state.recipe.bookmarked) _modelJs.addBookmark(_modelJs.state.recipe);
     else _modelJs.deleteBookmark(_modelJs.state.recipe.id);
+    //Update recipe view
     _recipeViewJsDefault.default.update(_modelJs.state.recipe);
+    //Render bookmarks
+    _bookmarksViewJsDefault.default.render(_modelJs.state.bookmarks);
 };
 ///////////////////////////////////////
 const init = function() {
@@ -536,7 +543,7 @@ const init = function() {
 //init function is immediataly called
 init();
 
-},{"core-js/stable":"95FYz","regenerator-runtime/runtime":"1EBPE","./model.js":"1pVJj","./views/recipeView.js":"82pEw","./views/searchView.js":"jcq1q","./views/resultsView.js":"5peDB","./views/paginationView.js":"2PAUD","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV"}],"95FYz":[function(require,module,exports) {
+},{"core-js/stable":"95FYz","regenerator-runtime/runtime":"1EBPE","./model.js":"1pVJj","./views/recipeView.js":"82pEw","./views/searchView.js":"jcq1q","./views/resultsView.js":"5peDB","./views/paginationView.js":"2PAUD","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV","./views/bookmarksView.js":"764v9"}],"95FYz":[function(require,module,exports) {
 require('../modules/es.symbol');
 require('../modules/es.symbol.description');
 require('../modules/es.symbol.async-iterator');
@@ -14440,6 +14447,38 @@ class PaginationView extends _viewDefault.default {
     }
 }
 exports.default = new PaginationView();
+
+},{"./View":"9dvKv","url:../../img/icons.svg":"5jwFy","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV"}],"764v9":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _view = require("./View");
+var _viewDefault = parcelHelpers.interopDefault(_view);
+var _iconsSvg = require("url:../../img/icons.svg");
+var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+class BookmarksView extends _viewDefault.default {
+    _parentElement = document.querySelector('.bookmarks__list');
+    _errorMessage = 'No bookmarks yet. Find a nice recipe and bookmark it 😊';
+    _successMessage = '';
+    _generateMarkup() {
+        return this._data.map(this._generateMarkupPreview).join('');
+    }
+    _generateMarkupPreview(result) {
+        const id = window.location.hash.slice(1);
+        return `          
+    <li class="preview">
+        <a class="preview__link ${result.id === id ? 'preview__link--active' : ''}" href="#${result.id}">
+          <figure class="preview__fig">
+            <img src="${result.image}" alt="${result.title}" />
+          </figure>
+          <div class="preview__data">
+            <h4 class="preview__title">${result.title}</h4>
+            <p class="preview__publisher">${result.publisher}</p>
+          </div>
+        </a>
+    </li>`;
+    }
+}
+exports.default = new BookmarksView();
 
 },{"./View":"9dvKv","url:../../img/icons.svg":"5jwFy","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV"}]},["kS06O","lA0Es"], "lA0Es", "parcelRequire3a11")
 
