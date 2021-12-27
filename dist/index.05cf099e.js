@@ -517,7 +517,10 @@ const controlServings = function(newServings) {
     //Update the recipe servings
     _modelJs.updateServings(newServings);
     //Update the recipe view
-    // recipeView.render(model.state.recipe);
+    _recipeViewJsDefault.default.update(_modelJs.state.recipe);
+};
+const controlAddBookmark = function() {
+    _modelJs.addBookmark(_modelJs.state.recipe);
     _recipeViewJsDefault.default.update(_modelJs.state.recipe);
 };
 ///////////////////////////////////////
@@ -525,6 +528,7 @@ const init = function() {
     //subscribing to controlRecipes
     _recipeViewJsDefault.default.addHandlerRender(controlRecipes);
     _recipeViewJsDefault.default.addHandlerUpdateServings(controlServings);
+    _recipeViewJsDefault.default.addHandlerBookmark(controlAddBookmark);
     _searchViewJsDefault.default.addHandlerSearch(controlSearchResults);
     _paginationViewJsDefault.default.addHandlerClick(controlPagination);
 };
@@ -13675,6 +13679,8 @@ parcelHelpers.export(exports, "getSearchResultsPage", ()=>getSearchResultsPage
 );
 parcelHelpers.export(exports, "updateServings", ()=>updateServings
 );
+parcelHelpers.export(exports, "addBookmark", ()=>addBookmark
+);
 var _configJs = require("./config.js");
 var _helpersJs = require("./helpers.js");
 const state = {
@@ -13685,7 +13691,8 @@ const state = {
         results: [],
         resultsPerPage: _configJs.RES_PER_PAGE,
         page: 1
-    }
+    },
+    bookmarks: []
 };
 const loadRecipe = async function(id) {
     try {
@@ -13736,6 +13743,12 @@ const updateServings = function(newServings) {
     //newQuantity = oldQuantity * newServings / oldServings
     });
     state.recipe.servings = newServings;
+};
+const addBookmark = function(recipe) {
+    //add bookmark
+    state.bookmarks.push(recipe);
+    //mark current recipe as bookmark
+    if (recipe.id === state.recipe.id) state.recipe.bookmarked = true;
 };
 
 },{"./config.js":"6V52N","./helpers.js":"9RX9R","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV"}],"6V52N":[function(require,module,exports) {
@@ -13839,6 +13852,13 @@ class RecipeView extends _viewDefault.default {
             if (updateTo > 0) handler1(updateTo);
         });
     }
+    addHandlerBookmark(handler2) {
+        this._parentElement.addEventListener('click', function(e) {
+            const btn = e.target.closest('.btn--bookmark');
+            if (!btn) return;
+            handler2();
+        });
+    }
     _generateMarkup() {
         return `
     <figure class="recipe__fig">
@@ -13882,9 +13902,9 @@ class RecipeView extends _viewDefault.default {
           <use href="${_iconsSvgDefault.default}#icon-user"></use>
         </svg>
       </div>
-      <button class="btn--round">
+      <button class="btn--round btn--bookmark">
         <svg class="">
-          <use href="${_iconsSvgDefault.default}#icon-bookmark-fill"></use>
+          <use href="${_iconsSvgDefault.default}#icon-bookmark${this._data.bookmarked ? '-fill' : ''}"></use>
         </svg>
       </button>
     </div>
@@ -14331,7 +14351,6 @@ class ResultsView extends _viewDefault.default {
     _errorMessage = 'No recipes found for your search. Please try again.';
     _successMessage = '';
     _generateMarkup() {
-        console.log(this._data);
         return this._data.map(this._generateMarkupPreview).join('');
     }
     _generateMarkupPreview(result) {
