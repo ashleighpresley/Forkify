@@ -536,6 +536,9 @@ const controlAddBookmark = function() {
 const controlBookmarks = function() {
     _bookmarksViewJsDefault.default.render(_modelJs.state.bookmarks);
 };
+const controlAddRecipe = function(newRecipe) {
+    console.log(newRecipe);
+};
 ///////////////////////////////////////
 const init = function() {
     _bookmarksViewJsDefault.default.addHandlerRender(controlBookmarks);
@@ -544,6 +547,7 @@ const init = function() {
     _recipeViewJsDefault.default.addHandlerBookmark(controlAddBookmark);
     _searchViewJsDefault.default.addHandlerSearch(controlSearchResults);
     _paginationViewJsDefault.default.addHandlerClick(controlPagination);
+    _addRecipeViewJsDefault.default.addHandlerUpload(controlAddRecipe);
 };
 //init function is immediataly called
 init();
@@ -14524,12 +14528,24 @@ class AddRecipeView extends _viewDefault.default {
         this._overlay.classList.toggle('hidden');
         this._window.classList.toggle('hidden');
     }
+    //Show add recipe form on click
     _addHandlerShowWindow() {
         this._btnOpen.addEventListener('click', this.toggleWindow.bind(this));
     }
+    //Hide add recipe form on click
     _addHandlerHideWindow() {
         this._btnClose.addEventListener('click', this.toggleWindow.bind(this));
         this._overlay.addEventListener('click', this.toggleWindow.bind(this));
+    }
+    addHandlerUpload(handler) {
+        this._parentElement.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const dataArray = [
+                ...new FormData(this)
+            ];
+            const data = Object.fromEntries(dataArray);
+            handler(data);
+        });
     }
     _generateMarkup() {
     }
