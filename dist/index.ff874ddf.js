@@ -1,2 +1,0 @@
-const recipeContainer=document.querySelector(".recipe"),timeout=function(e){return new Promise((function(o,t){setTimeout((function(){t(new Error(`Request took too long! Timeout after ${e} second`))}),1e3*e)}))},showRecipe=async function(){try{const e=await fetch("https://forkify-api.herokuapp.com/api/v2/recipes/5ed6604591c37cdc054bc886"),o=await e.json();if(!e.ok)throw new Error(`${o.message} (${e.status})`);console.log(e,o)}catch(e){console.log(e)}};showRecipe();
-//# sourceMappingURL=index.ff874ddf.js.map
