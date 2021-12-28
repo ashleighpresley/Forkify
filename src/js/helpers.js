@@ -22,3 +22,25 @@ export const getJSON = async function (url) {
     throw err;
   }
 };
+
+export const sendJSON = async function (url, uploadData) {
+  try {
+    //whichever Promise finishes first, whether it fails or succeeds becomes the winner
+    const res = await Promise.race([
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(uploadData),
+      }),
+      timeout(TIMEOUT_SEC),
+    ]);
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(`${data.message} (${res.status})`);
+    return data;
+  } catch (err) {
+    throw err;
+  }
+};
